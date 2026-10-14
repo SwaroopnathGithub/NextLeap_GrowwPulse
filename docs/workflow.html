@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>n8n Workflow — GrowwPulse</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Groww<span>Pulse</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="weekly-product-pulse.html">Product Pulse</a>
+      <a href="fee-explainer.html">Fee Explainer</a>
+      <a href="workflow.html" class="active">n8n Workflow</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>How the n8n Workflow Works</h1>
+    <p class="subtitle">The automation that turns the review analysis into a drafted pulse, a human approval step, and queued deliverables — nothing goes out automatically.</p>
+
+    <div class="meta-row">
+      <span class="pill">Runs locally via Docker</span>
+      <span class="pill">LLM: Groq</span>
+      <span class="pill">Human approval gate</span>
+      <span class="pill">Gmail draft only — never sent</span>
+    </div>
+
+    <h2>What we've done so far</h2>
+    <ol>
+      <li><strong>Scraped</strong> 12,637 Groww Play Store reviews (last 12 weeks, <code>com.nextbillion.groww</code>, India) with <code>scripts/scrape_reviews.py</code>.</li>
+      <li><strong>Analyzed</strong> them for rating trends and 9 recurring themes, and confirmed a clear, recurring fee/charge confusion signal (brokerage charges perceived as unexpectedly high) with <code>scripts/analyze_reviews.py</code> and <code>scripts/weekly_pulse_data.py</code>.</li>
+      <li><strong>Drafted</strong> the two deliverables by hand first — the <a href="weekly-product-pulse.html">Weekly Product Pulse</a> and the <a href="fee-explainer.html">Fee Explainer</a> — as the reference version of what the workflow should produce.</li>
+      <li><strong>Built the n8n workflow</strong> (<code>n8n/groww-pulse-workflow.json</code>) that reproduces that same drafting step with an LLM, gated behind a human approval, so this can run on a recurring cadence (e.g. weekly) without manual re-analysis each time.</li>
+      <li><strong>Published this static site</strong> as the always-visible version of the deliverables, independent of whether the workflow has run recently.</li>
+    </ol>
+
+    <h2>The workflow, step by step</h2>
+
+    <div class="card">
+      <h3>1. Manual Trigger</h3>
+      <p>Starts the workflow run. (Can be swapped for a Schedule Trigger later to run weekly automatically — kept manual for now so each run is a deliberate, reviewable action.)</p>
+    </div>
+
+    <div class="card">
+      <h3>2. Review Analysis Data <span class="pill">Set node</span></h3>
+      <p>Carries the condensed output of the analysis scripts into the workflow: the rating distribution, the 9 theme frequencies, the week-over-week trend, and the representative fee-complaint quotes — the same numbers behind the Product Pulse and Fee Explainer pages on this site.</p>
+    </div>
+
+    <div class="card">
+      <h3>3. Groq Chat Model + Basic LLM Chain <span class="pill">Draft Pulse &amp; Fee Explainer</span></h3>
+      <p>Feeds that analysis data to an LLM (via Groq) with a prompt asking for two short sections in markdown: a condensed Weekly Product Pulse and a Fee Explainer — mirroring the structure of the two reference docs on this site, but generated fresh from the current data each run.</p>
+    </div>
+
+    <div class="card">
+      <h3>4. Approval Gate <span class="pill">Wait node — the key control</span></h3>
+      <p>The workflow pauses here. <strong>Nothing is written to the Doc or drafted in Gmail until a person explicitly resumes it.</strong> Resuming means opening the Resume URL that n8n shows for the paused execution. If nobody opens it, the run simply stops here — reject-by-default, not send-by-default.</p>
+    </div>
+
+    <div class="card">
+      <h3>5a. Append to Pulse Doc <span class="pill">Google Docs node</span></h3>
+      <p>Only runs after approval. Appends the approved pulse + fee-explainer text, dated, to a running Google Doc — so there's a running history of every approved weekly pulse, not just the latest one.</p>
+    </div>
+
+    <div class="card">
+      <h3>5b. Create Gmail Draft <span class="pill">Gmail node — draft only</span></h3>
+      <p>Also only runs after approval. Creates a Gmail <em>draft</em> with the same content — <strong>it is never sent automatically</strong>. A person still has to open it in Gmail and hit send themselves if they want it to go out.</p>
+    </div>
+
+    <h2>Why it's built this way</h2>
+    <ul>
+      <li><strong>Approval before any write</strong> — an LLM draft is a starting point, not a finished communication. The Wait node makes sure a person reads it before it touches a shared doc or an inbox.</li>
+      <li><strong>Draft, not send</strong> — even after approval, the email step stops at "draft." Sending is a separate, deliberate human action.</li>
+      <li><strong>Separation of credentials</strong> — the workflow references Groq/Google Docs/Gmail credentials by name but doesn't create or store them; those are configured directly in n8n by whoever owns the account.</li>
+    </ul>
+
+    <p class="note">Full import instructions and node-by-node configuration notes are in <code>n8n/README.md</code> in the repo. The workflow JSON itself is <code>n8n/groww-pulse-workflow.json</code>.</p>
+
+    <h2>What's next (not yet done)</h2>
+    <ul>
+      <li>Swap the Manual Trigger for a weekly Schedule Trigger once the approval flow has been tested end-to-end.</li>
+      <li>Point the Set node at a live data source (e.g. a re-run of the scrape + analysis scripts) instead of a fixed snapshot, so each run reflects the latest reviews.</li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">NextLeap Milestone 5 — GrowwPulse. Built from public Play Store review data.</div>
+</footer>
+</body>
+</html>

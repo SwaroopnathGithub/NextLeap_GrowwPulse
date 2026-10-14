@@ -15,6 +15,7 @@
       <a href="index.html" class="active">Home</a>
       <a href="weekly-product-pulse.html">Product Pulse</a>
       <a href="fee-explainer.html">Fee Explainer</a>
+      <a href="workflow.html">n8n Workflow</a>
       <a href="sources.html">Sources</a>
     </nav>
   </div>
@@ -49,12 +50,16 @@
       <p>A deep dive into the single most consistent complaint across all 12 weeks: confusion over brokerage and account charges — why it happens, and concrete product fixes.</p>
     </div>
     <div class="card">
+      <h3><a href="workflow.html">n8n Workflow →</a></h3>
+      <p>Step-by-step walkthrough of the automation: how the LLM draft, the human approval gate, the doc append, and the Gmail draft creation fit together — and what's done versus what's next.</p>
+    </div>
+    <div class="card">
       <h3><a href="sources.html">Sources & Methodology →</a></h3>
       <p>Where the data came from, how themes were tagged, and a link to the full raw review dataset (CSV).</p>
     </div>
 
     <h2>How this was built</h2>
-    <p>Reviews were scraped from the Google Play Store listing for Groww (<code>com.nextbillion.groww</code>), then analyzed for rating trends and recurring themes. The findings feed an n8n workflow with a human approval gate: an LLM (Groq) drafts the pulse and fee-explainer text, a person approves it, and only then does it get appended to a tracking doc and queued as a Gmail draft — never sent automatically.</p>
+    <p>Reviews were scraped from the Google Play Store listing for Groww (<code>com.nextbillion.groww</code>), then analyzed for rating trends and recurring themes. The findings feed an n8n workflow with a human approval gate: an LLM (Groq) drafts the pulse and fee-explainer text, a person approves it, and only then does it get appended to a tracking doc and queued as a Gmail draft — never sent automatically. See the <a href="workflow.html">full workflow breakdown</a> for details.</p>
 
     <p class="note">This is a product-review synthesis exercise, not Groww's official fee schedule or policy. Exact rates should be confirmed against Groww's own published charges before being used in any user-facing communication.</p>
   </div>
