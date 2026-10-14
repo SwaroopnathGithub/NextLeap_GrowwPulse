@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwPulse — Groww App Review Insights</title>
+<meta name="description" content="A weekly product pulse and fee explainer for the Groww app, built from 12 weeks of Play Store reviews.">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Groww<span>Pulse</span></a>
+    <nav>
+      <a href="index.html" class="active">Home</a>
+      <a href="weekly-product-pulse.html">Product Pulse</a>
+      <a href="fee-explainer.html">Fee Explainer</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>GrowwPulse</h1>
+    <p class="subtitle">Turning 12 weeks of Groww app reviews into a weekly product pulse and a plain-language fee explainer — built for NextLeap Milestone 5.</p>
+
+    <div class="meta-row">
+      <span class="pill">12,637 reviews analyzed</span>
+      <span class="pill">12-week window</span>
+      <span class="pill">Google Play Store, India</span>
+      <span class="pill">Generated 2026-10-14</span>
+    </div>
+
+    <div class="card-grid">
+      <div class="stat"><div class="num">4.3–4.5★</div><div class="label">avg weekly rating</div></div>
+      <div class="stat"><div class="num">12.1%</div><div class="label">reviews are 1-2★</div></div>
+      <div class="stat"><div class="num">382</div><div class="label">fee/charge mentions</div></div>
+      <div class="stat"><div class="num">60%</div><div class="label">of fee mentions are 1-2★</div></div>
+    </div>
+
+    <h2>What's here</h2>
+    <div class="card">
+      <h3><a href="weekly-product-pulse.html">Weekly Product Pulse →</a></h3>
+      <p>Rating trends, the top 9 recurring themes, week-by-week theme volume, representative quotes, and recommendations.</p>
+    </div>
+    <div class="card">
+      <h3><a href="fee-explainer.html">Fee Explainer →</a></h3>
+      <p>A deep dive into the single most consistent complaint across all 12 weeks: confusion over brokerage and account charges — why it happens, and concrete product fixes.</p>
+    </div>
+    <div class="card">
+      <h3><a href="sources.html">Sources & Methodology →</a></h3>
+      <p>Where the data came from, how themes were tagged, and a link to the full raw review dataset (CSV).</p>
+    </div>
+
+    <h2>How this was built</h2>
+    <p>Reviews were scraped from the Google Play Store listing for Groww (<code>com.nextbillion.groww</code>), then analyzed for rating trends and recurring themes. The findings feed an n8n workflow with a human approval gate: an LLM (Groq) drafts the pulse and fee-explainer text, a person approves it, and only then does it get appended to a tracking doc and queued as a Gmail draft — never sent automatically.</p>
+
+    <p class="note">This is a product-review synthesis exercise, not Groww's official fee schedule or policy. Exact rates should be confirmed against Groww's own published charges before being used in any user-facing communication.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">NextLeap Milestone 5 — GrowwPulse. Built from public Play Store review data.</div>
+</footer>
+</body>
+</html>

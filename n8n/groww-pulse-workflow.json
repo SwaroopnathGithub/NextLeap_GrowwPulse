@@ -1,0 +1,203 @@
+{
+  "name": "GrowwPulse - Weekly Product Pulse & Fee Explainer",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1a1a1a1-0001-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-900, 300]
+    },
+    {
+      "parameters": {
+        "content": "## GrowwPulse workflow\n\n1. Manual Trigger -> loads the condensed review-analysis data (stats + quotes already computed outside n8n from the 12-week Play Store scrape).\n2. Groq Chat Model + Basic LLM Chain -> drafts the Weekly Product Pulse + Fee Explainer sections in one pass.\n3. Wait node -> **approval gate**. The workflow pauses here. Nothing is written to the Doc or drafted in Gmail until this is resumed.\n   - Resume mode is set to 'webhook'. After a manual test run, open the execution in n8n, copy the Resume URL it shows, and open that URL in a browser to approve. If you never call it, nothing downstream runs (reject-by-default).\n4. Google Docs node -> appends the approved text to a doc you specify (replace the placeholder Document ID).\n5. Gmail node -> creates a DRAFT only (resource: draft, operation: create) - it never sends.\n\n**Before running:**\n- Select your own Groq credential on the 'Groq Chat Model' node.\n- Select your own Google Docs credential + paste your target Doc ID on the 'Append to Pulse Doc' node.\n- Select your own Gmail credential on the 'Create Gmail Draft' node.\n- Double-check the Google Docs 'insert text' action config and the Wait node's resume options after import - these two vary most across n8n versions, so verify they match your installed version before relying on them."
+      },
+      "id": "a1a1a1a1-0000-4000-8000-000000000000",
+      "name": "Sticky Note - Read Me",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-900, -40]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b2b2b2b2-0001-4000-8000-000000000001",
+              "name": "analysisData",
+              "value": "RATING DISTRIBUTION (12 weeks, 12,637 reviews): 5star 9765 (77.3%), 4star 1004 (7.9%), 3star 345 (2.7%), 2star 212 (1.7%), 1star 1311 (10.4%). 12.1% of reviews are 1-2 star.\n\nTOP THEMES BY MENTION COUNT: UI/UX 558 (4.4%, mostly positive), Fees & charges 382 (3.0%, mostly negative), Order execution/trading 379 (3.0%), Customer support 337 (2.7%), App performance/crashes 297 (2.4%), Mutual funds/SIP 214 (1.7%), IPO/allotment 89 (0.7%), Withdrawal/payout 88 (0.7%, low volume but high severity), KYC/account opening 73 (0.6%).\n\nWEEK-OVER-WEEK (most recent 4 weeks vs prior 8 weeks): fee/charge mention share eased slightly from 3.12% to 2.72%, but complaint content is unchanged.\n\nFEE/CHARGE DEEP DIVE: 151 reviews mention specific fee terms (brokerage, DP charge, AMC, commission); 60% of those are 1-2 star. Dominant complaint: brokerage charges perceived as unexpectedly high, often compared unfavorably to Zerodha. Representative quotes: \"Brokerage fees are too high, DP charge 24 rupees... when I calculate my monthly brokerage charge I am fully shocked\" (1 star). \"This application has the highest brokerage charges in comparison to other applications.\" (1 star). \"Brokerage charge is very very high. This will finish your hard earned profit.\" (1 star). \"Not for beginners, stock purchase/sell - charges 5rs/trade\" (beginner surprised by flat per-trade fee). Root cause pattern: charges are standard/industry-typical but are not surfaced to the user BEFORE they trade, only as a post-trade deduction.\n\nOTHER THEMES, BRIEF: Order execution complaints cluster around slow fills, FNO glitches, stop-loss/limit order confusion. Customer support is mixed - praised for speed by some, but recurring 'no reply' complaints specifically on fund/withdrawal issues. App performance crashes/lag reported inconsistently, not concentrated in one app version in this sample. Withdrawal/payout: low volume but high-severity reviews describing funds stuck for days with unresolved support tickets.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2b2b2b2-0000-4000-8000-000000000000",
+      "name": "Review Analysis Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-680, 300]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "id": "c3c3c3c3-0000-4000-8000-000000000000",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [-460, 520],
+      "credentials": {
+        "groqApi": {
+          "id": "REPLACE_WITH_YOUR_GROQ_CREDENTIAL_ID",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a product analyst at Groww. Using only the review-analysis data below (do not invent numbers), write two short sections in markdown:\n\n## Weekly Product Pulse\nA concise summary (6-10 bullet points) covering: overall sentiment, the top themes and their mention share, what changed week-over-week, and 2-3 concrete recommendations.\n\n## Fee Explainer\nA plain-language explanation (150-250 words) of the brokerage/fee confusion users are reporting, including 1-2 direct quotes, why it's happening (charges aren't surfaced before the trade), and 2-3 concrete product fixes.\n\nReview analysis data:\n{{ $json.analysisData }}",
+        "options": {}
+      },
+      "id": "d4d4d4d4-0000-4000-8000-000000000000",
+      "name": "Draft Pulse & Fee Explainer",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [-460, 300]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {
+          "webhookSuffix": "groww-pulse-approval"
+        }
+      },
+      "id": "e5e5e5e5-0000-4000-8000-000000000000",
+      "name": "Approval Gate (Wait)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [-220, 300],
+      "webhookId": "f6f6f6f6-0000-4000-8000-000000000000"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_GOOGLE_DOC_ID",
+          "mode": "id"
+        },
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "=## GrowwPulse update - {{ $now.format('yyyy-MM-dd') }}\n\n{{ $('Draft Pulse & Fee Explainer').item.json.text }}",
+              "location": "documentEnd"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f7f7f7f7-0000-4000-8000-000000000000",
+      "name": "Append to Pulse Doc",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [20, 200],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_GOOGLE_DOCS_CREDENTIAL_ID",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "operation": "create",
+        "subject": "=Groww Weekly Product Pulse - {{ $now.format('yyyy-MM-dd') }}",
+        "message": "={{ $('Draft Pulse & Fee Explainer').item.json.text }}",
+        "options": {}
+      },
+      "id": "08080808-0000-4000-8000-000000000000",
+      "name": "Create Gmail Draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [20, 420],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Review Analysis Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review Analysis Data": {
+      "main": [
+        [
+          {
+            "node": "Draft Pulse & Fee Explainer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Draft Pulse & Fee Explainer",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Pulse & Fee Explainer": {
+      "main": [
+        [
+          {
+            "node": "Approval Gate (Wait)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approval Gate (Wait)": {
+      "main": [
+        [
+          {
+            "node": "Append to Pulse Doc",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Gmail Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false
+  }
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fee Explainer — GrowwPulse</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Groww<span>Pulse</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="weekly-product-pulse.html">Product Pulse</a>
+      <a href="fee-explainer.html" class="active">Fee Explainer</a>
+      <a href="sources.html">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Understanding Groww's Charges</h1>
+    <p class="subtitle">A plain-language explainer, built from what reviewers are actually confused about.</p>
+
+    <div class="card">
+      <strong>Why this exists:</strong> across 12 weeks of Play Store reviews (12,637 reviews, 2026-07-21 to 2026-10-14), fees and charges are the single most consistent complaint theme — 382 mentions, and 60% of reviews using specific fee terms (brokerage, DP charge, AMC, etc.) are 1-2★. The complaint isn't usually that the charges are unfair — it's that users don't know about them until they've already traded and see the deduction.
+    </div>
+
+    <h2>What users are confused about</h2>
+
+    <h3>1. Brokerage charges (the #1 complaint)</h3>
+    <p>Reviewers consistently describe being surprised by brokerage deductions after trading, and several directly compare Groww unfavorably to competitors (Zerodha named repeatedly) on this point.</p>
+    <blockquote class="neg">"Brokerage fees are too high, DP charge 24 rupees, I have switched to another platform, when I calculate my monthly brokerage charge I am fully shocked" — 1★</blockquote>
+    <blockquote class="neg">"This application has the highest brokerage charges in comparison to other applications." — 1★</blockquote>
+    <blockquote class="neg">"Brokerage charge is very very high. This will finish your hard earned profit." — 1★</blockquote>
+    <p><strong>The underlying issue:</strong> the charge itself may be standard industry pricing, but it isn't surfaced to the user <em>before</em> they place the trade — only after, as a deduction they then have to go looking for an explanation of.</p>
+
+    <h3>2. DP (Depository Participant) charges</h3>
+    <p>Mentioned specifically at ₹24 by at least one reviewer — a charge applied per scrip on sell transactions, standard across Indian brokers, but essentially invisible to most retail users until it shows up.</p>
+
+    <h3>3. Flat per-trade charges for beginners</h3>
+    <blockquote class="neg">"Not for beginners, stock purchase/sell — charges ₹5/trade"</blockquote>
+    <p>New users in particular seem to arrive expecting "free" trading (a common marketing claim across the industry) and are caught off guard by a flat per-trade fee.</p>
+
+    <h3>4. AMC / annual maintenance charges</h3>
+    <p>Lower volume but same pattern — charges that exist but aren't proactively explained at the point where the user would want to know about them (account opening, not account statement).</p>
+
+    <h2>What Groww could do (based on review evidence alone)</h2>
+    <ol>
+      <li><strong>Pre-trade cost preview</strong> — show the expected brokerage + DP charge + taxes before the user confirms a buy/sell, not just in the post-trade contract note.</li>
+      <li><strong>A persistent, simple "What you'll pay" page</strong> — one page, plain language, no jargon, listing brokerage %, DP charge, AMC, and any per-trade flat fee — linked from the trade confirmation screen itself.</li>
+      <li><strong>First-trade nudge</strong> — a one-time explainer shown to new users on their first trade, specifically addressing the "is this really free?" expectation gap.</li>
+      <li><strong>Monthly charge summary notification</strong> — several reviewers only reacted negatively when they "added it all up" at month-end — a proactive monthly summary (via push notification, not buried in a statement) could reframe this from "hidden fee" to "here's what you paid, and why."</li>
+    </ol>
+
+    <h2>What this is not</h2>
+    <p class="note">This document is a synthesis of review-text patterns, not Groww's actual fee schedule or official policy. Exact rates, GST/STT treatment, and any charge changes should be confirmed against Groww's official charges page before publishing anything fee-specific to end users.</p>
+
+    <h2>Source</h2>
+    <p>Derived from the Play Store review dataset (12,637 reviews, last 12 weeks). See <a href="sources.html">Sources &amp; Methodology</a> and the companion <a href="weekly-product-pulse.html">Weekly Product Pulse</a> for the full theme breakdown.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">NextLeap Milestone 5 — GrowwPulse. Built from public Play Store review data.</div>
+</footer>
+</body>
+</html>

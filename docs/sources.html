@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sources & Methodology — GrowwPulse</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="index.html">Groww<span>Pulse</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="weekly-product-pulse.html">Product Pulse</a>
+      <a href="fee-explainer.html">Fee Explainer</a>
+      <a href="sources.html" class="active">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1>Sources &amp; Methodology</h1>
+
+    <h2>Data source</h2>
+    <p>Reviews were scraped from the Google Play Store listing for Groww (app ID <code>com.nextbillion.groww</code>, India store) using the <code>google-play-scraper</code> Python library, sorted newest-first, paginated until the 12-week cutoff was reached.</p>
+    <ul>
+      <li><strong>Window:</strong> 2026-07-21 to 2026-10-14 (12 weeks)</li>
+      <li><strong>Sample size:</strong> 12,637 reviews</li>
+      <li><strong>Fields captured:</strong> review ID, username, star score, timestamp, review text, thumbs-up count, app version, developer reply (if any)</li>
+    </ul>
+    <p><a class="btn" href="assets/groww_reviews.csv">Download the raw dataset (CSV)</a></p>
+
+    <h2>Theme tagging</h2>
+    <p>Themes were assigned by keyword matching against the review text (case-insensitive substring match), not LLM classification. A review can match more than one theme. The keyword groups used:</p>
+    <table>
+      <thead><tr><th>Theme</th><th>Keywords</th></tr></thead>
+      <tbody>
+        <tr><td>fees_charges</td><td>fee, fees, charge, charges, charged, deduct, deducted, deduction, hidden charge, amc, brokerage, commission, gst, stt, convenience fee, platform fee</td></tr>
+        <tr><td>kyc_account</td><td>kyc, verification, verify, account open, signup, sign up, login, otp, aadhaar, pan card</td></tr>
+        <tr><td>withdrawal_payout</td><td>withdraw, withdrawal, payout, refund, money stuck, funds stuck, not credited</td></tr>
+        <tr><td>app_performance</td><td>crash, crashing, bug, glitch, slow, lag, freeze, not loading, error, hang</td></tr>
+        <tr><td>customer_support</td><td>support, customer care, customer service, response, no reply, helpline, complaint</td></tr>
+        <tr><td>ui_ux</td><td>interface, ui, ux, design, easy to use, user friendly, confusing</td></tr>
+        <tr><td>order_execution</td><td>order, execution, trade, buy, sell, limit order, stop loss, delay in order</td></tr>
+        <tr><td>ipo</td><td>ipo, allotment, apply</td></tr>
+        <tr><td>mutual_funds</td><td>mutual fund, sip, nav</td></tr>
+      </tbody>
+    </table>
+    <p>Treat theme percentages as directional signal (what's recurring and how often it's mentioned), not precise topic-model output.</p>
+
+    <h2>Pipeline</h2>
+    <p>The full pipeline, in order:</p>
+    <ol>
+      <li><strong>Scrape</strong> — <code>scripts/scrape_reviews.py</code> pulls reviews via the Play Store API wrapper and filters to the 12-week window.</li>
+      <li><strong>Analyze</strong> — <code>scripts/analyze_reviews.py</code> and <code>scripts/weekly_pulse_data.py</code> compute rating distributions, theme frequencies, and week-over-week trends.</li>
+      <li><strong>Draft</strong> — the computed stats + representative quotes feed an n8n workflow where a Groq-backed LLM drafts the weekly pulse and fee explainer.</li>
+      <li><strong>Approve</strong> — the workflow pauses at a human approval gate before anything is written anywhere.</li>
+      <li><strong>Publish</strong> — once approved, the content is appended to a tracking Google Doc and queued as a Gmail draft (never auto-sent). This site is the static, always-visible version of the same deliverables.</li>
+    </ol>
+
+    <h2>Limitations</h2>
+    <ul>
+      <li>Keyword matching will miss paraphrased complaints and can occasionally mis-tag a theme (e.g., "order" matching casual phrasing unrelated to trade orders).</li>
+      <li>Reviews are self-selected — users who had a frustrating experience are more likely to leave a review than satisfied silent users, so absolute percentages likely overstate real-world incidence even if they're useful for relative theme ranking.</li>
+      <li>Fee figures quoted (₹24 DP charge, ₹5/trade) are what reviewers reported, not independently verified against Groww's official published rates.</li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">NextLeap Milestone 5 — GrowwPulse. Built from public Play Store review data.</div>
+</footer>
+</body>
+</html>
